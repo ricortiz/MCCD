@@ -43,6 +43,8 @@
 #include "DeformModel.h"
 
 #include "timing.h"
+
+#include <cstdio>
 #include <algorithm>
 
 #include "feature_pair.h"

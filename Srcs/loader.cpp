@@ -40,9 +40,7 @@
 
 // Author: Tang, Min tang_m@zju.edu.cn
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include <gl/gl.h>
+#include <GL/gl.h>
 
 #include <math.h>
 #include <stdio.h>
@@ -55,16 +53,17 @@
 #include <vector>
 #include <list>
 #include <algorithm>
+#include <sstream>
 
 typedef struct PLYVertex{
 	float coords[3];
 	unsigned char color[3];
-	void *other_props;		
+	void *other_props;
 } PLYVertex;
 
 typedef struct PLYFace{
 	unsigned char nverts;
-	int *verts;		
+	int *verts;
 	void *other_props;
 } PLYFace;
 
@@ -125,7 +124,7 @@ DeformModel::get_status_2(unsigned int id1, unsigned int id2, unsigned int st1, 
 	unsigned int edg1 = _tri_edges[id1].id((st1+1)%3);
 	unsigned int fid1 = _edges[edg1].fid(0);
 	unsigned int f1_mates = (fid1 == id1) ? _edges[edg1].fid(1) : fid1;
-		
+
 	unsigned int edg2 = _tri_edges[id2].id((st2+1)%3);
 	unsigned int fid2 = _edges[edg2].fid(0);
 	unsigned int f2_mates = (fid2 == id2) ? _edges[edg2].fid(1) : fid2;
@@ -195,16 +194,19 @@ DeformModel::BufferAdjacent()
 	get_orphans(adj_2_list, adj_1_list);
 }
 
-DeformModel::DeformModel(char *fname, unsigned int num_frame, float ply_scale)
+DeformModel::DeformModel(const std::string &fname, unsigned int num_frame, float ply_scale)
 {
 	Init();
 
-	char ply_fname[256];
-	
+// 	char ply_fname[256];
+
 	_num_frame = num_frame;
 	for (unsigned int cur_f = 0; cur_f < _num_frame; cur_f++) {
-		sprintf(ply_fname, "%s%d.ply", fname, cur_f);
-		FILE *fp = fopen(ply_fname, "rb");
+        std::stringstream ply_fname;
+        ply_fname << fname << cur_f << ".ply";
+// 		sprintf(ply_fname, "%s%d.ply", fname, cur_f);
+        std::cout << "Opening " << ply_fname.str() << std::endl;
+		FILE *fp = fopen(ply_fname.str().c_str(), "rb");
 		assert(fp);
 
 		// PLY object:
@@ -219,7 +221,7 @@ DeformModel::DeformModel(char *fname, unsigned int num_frame, float ply_scale)
 		assert(ply);
 
 		int file_type;
-		float version;		
+		float version;
 		ply_get_info(ply, &version, &file_type);
 
 		for (int i=0; i<nelems; i++) {
@@ -238,17 +240,17 @@ DeformModel::DeformModel(char *fname, unsigned int num_frame, float ply_scale)
 					if (equal_strings("x", plist[j]->name))
 					{
 						ply_get_property (ply, elem_name, &vert_props[0]);  /* x */
-						has_vertex_x = TRUE;
+						has_vertex_x = true;
 					}
 					else if (equal_strings("y", plist[j]->name))
 					{
 						ply_get_property (ply, elem_name, &vert_props[1]);  /* y */
-						has_vertex_y = TRUE;
+						has_vertex_y = true;
 					}
 					else if (equal_strings("z", plist[j]->name))
 					{
 						ply_get_property (ply, elem_name, &vert_props[2]);  /* z */
-						has_vertex_z = TRUE;
+						has_vertex_z = true;
 					}
 					else if (equal_strings("red", plist[j]->name))
 					{
@@ -291,9 +293,9 @@ DeformModel::DeformModel(char *fname, unsigned int num_frame, float ply_scale)
 				}
 
 				// grab all the vertex elements
-				PLYVertex plyNewVertex;		
+				PLYVertex plyNewVertex;
 				for (int j=0; j<num_elems; j++) {
-					ply_get_element(ply, (void *)&plyNewVertex);								
+					ply_get_element(ply, (void *)&plyNewVertex);
 
 					if (has_colors && cur_f == 0) {
 						_colors[j].set(plyNewVertex.color);
@@ -303,13 +305,13 @@ DeformModel::DeformModel(char *fname, unsigned int num_frame, float ply_scale)
 					if (cur_f == 0) {
 						_prev_vtxs[j] = _cur_vtxs[j] = _vtxs[j];
 					}
-					
+
 					if (j != 0 && j%1000000 == 0) {
-						cout << " - " << j << " of " << num_elems << " loaded." << endl;					
-					}				
+						cout << " - " << j << " of " << num_elems << " loaded." << endl;
+					}
 				}
 			}
-			
+
 			// this is a face (and, hopefully, a triangle):
 			else if (equal_strings ("face", elem_name) && _tris == NULL) {
 				// I need this for..., otherwise error ...
@@ -322,9 +324,9 @@ DeformModel::DeformModel(char *fname, unsigned int num_frame, float ply_scale)
 				}
 
 				/* grab all the face elements */
-				PLYFace plyFace;	
-				plyFace.other_props = NULL;			
-								
+				PLYFace plyFace;
+				plyFace.other_props = NULL;
+
 				list<edge2f> edgelist_temp;
 				vector<tri3f> trilist_temp;
 
@@ -333,7 +335,7 @@ DeformModel::DeformModel(char *fname, unsigned int num_frame, float ply_scale)
 					for (int fi = 0; fi < plyFace.nverts-2; fi++) {
 						//
 						// make a triangle in our format from PLY face + vertices
-						//						
+						//
 						// copy vertex indices
 						unsigned int id0, id1, id2;
 
@@ -351,15 +353,15 @@ DeformModel::DeformModel(char *fname, unsigned int num_frame, float ply_scale)
 						edgelist_temp.push_back(edge2f(id1, id2, fid));
 						edgelist_temp.push_back(edge2f(id2, id0, fid));
 					}
-					free(plyFace.verts);												
+					free(plyFace.verts);
 
 					if (j != 0 && j%500000 == 0) {
-						cout << " - " << j << " of " << num_elems << " loaded." << endl;					
+						cout << " - " << j << " of " << num_elems << " loaded." << endl;
 					}
 				}
 
 				edgelist_temp.sort();
-				
+
 				list<edge2f> edge_unqie;
 				for (list<edge2f>::iterator it=edgelist_temp.begin(); it!=edgelist_temp.end(); it++) {
 					if (!edge_unqie.empty() && *it == edge_unqie.back()) { // find duplicated with other fid
@@ -386,7 +388,7 @@ DeformModel::DeformModel(char *fname, unsigned int num_frame, float ply_scale)
 
 				// copy over temp list to static array
 				_num_tri = (unsigned int)trilist_temp.size();
-				cout << "Allocating " << _num_tri*sizeof(tri3f) << " bytes of storage for triangles." << endl;			
+				cout << "Allocating " << _num_tri*sizeof(tri3f) << " bytes of storage for triangles." << endl;
 				_tris = new tri3f[_num_tri];
 				_tri_nrms = new vec3f[_num_tri];
 				_old_tri_nrms = NULL;
@@ -415,9 +417,9 @@ DeformModel::DeformModel(char *fname, unsigned int num_frame, float ply_scale)
 				NULL;
 		}
 
-		// PLY parsing ended, clean up vertex buffer and close the file		
+		// PLY parsing ended, clean up vertex buffer and close the file
+// 		fclose(fp);
 		ply_close(ply);
-		fclose(fp);
 	}
 
 	UpdateTriNorm();

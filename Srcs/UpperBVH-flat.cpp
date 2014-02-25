@@ -43,10 +43,12 @@
 #include <stdlib.h>
 #include <assert.h>
 
+#include "memory.h"
 #include "UpperBVH.h"
 #include "DeformBVH.h"
 #include "DeformModel.h"
 #include "aap.h"
+
 static DeformBVHTree **s_trees;
 
 #include "timing.h"
@@ -78,7 +80,7 @@ UpperTree::build_tree()
 	//_root = new UpperNode();
 	//_root->_box = total;
 	//_nodes = new UpperNode[count*2-1];
-	_nodes = (UpperNode*) _aligned_malloc((count*2-1) * sizeof(UpperNode), 16);
+	_nodes = (UpperNode*) malloc_simd((count*2-1) * sizeof(UpperNode));
 	_nodes[0]._box = total;
 	s_current_node = _nodes+3;
 
@@ -106,7 +108,7 @@ UpperTree::build_tree()
 UpperTree::~UpperTree()
 {
 	//delete [] _nodes;
-	_aligned_free(_nodes);
+	free_simd(_nodes);
 
 	for (unsigned int i=0; i<_mdl->_num_parts; i++)
 		delete _lowers[i];

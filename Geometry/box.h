@@ -41,6 +41,6 @@
 // Author: Tang, Min tang_m@zju.edu.cn
 
 #pragma once
-#include "KDOP24.h"
+#include "kDOP24.h"
 
 #define BOX kDOP24

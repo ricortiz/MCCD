@@ -40,6 +40,8 @@
 
 // Author: Tang, Min tang_m@zju.edu.cn
 
+#include <cstring>
+#include <cstdlib>
 #include "logger.h"
 Logger *logger;
 
@@ -103,7 +105,7 @@ int main(int argc, char **argv)
 		printf("Usage: %s param_file\n", argv[0]);
 		exit(0);
 	}
-	
+
 	initModel(DATA_PATH, NUM_FRAME, MODEL_SCALE, CCD);
 
 	while (1) {

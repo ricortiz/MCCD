@@ -46,6 +46,7 @@
 #include "UpperBVH.h"
 #include "DeformBVH.h"
 #include "DeformModel.h"
+#include "memory.h"
 
 static DeformModel *s_mdl;
 static DeformBVHTree **s_trees;
@@ -104,7 +105,7 @@ UpperTree::rebuild(bool ccd)
 			_lowers[i]->refit();
 		}
 
-	_aligned_free(_nodes);
+	free_simd(_nodes);
 
 	build_tree();
 

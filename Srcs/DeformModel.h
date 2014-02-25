@@ -46,8 +46,10 @@
 
 #include "vec3f.h"
 
+#include <climits> // for UINT_MAX
 #include <vector>
 #include <set>
+#include <string> 
 
 using namespace std;
 typedef vector<unsigned int> id_list;
@@ -235,8 +237,8 @@ class DeformModel {
 
 public:
 	DeformModel();
-	DeformModel(char *fname, unsigned int num_frame, float ply_scale);
-	DeformModel(char *fname, unsigned int num_frame, unsigned int num_bodys, float ply_scale);
+	DeformModel(const std::string &fname, unsigned int num_frame, float ply_scale);
+	DeformModel(const std::string &fname, unsigned int num_frame, unsigned int num_bodys, float ply_scale);
 	DeformModel(char *fname, unsigned int num_frame); // aff
 	~DeformModel();
 
