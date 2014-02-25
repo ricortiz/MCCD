@@ -1,0 +1,23 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mccd", "Collision.vcproj", "{D60AB091-1DB6-4ECB-B55A-C0C5B8BC3CFB}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release-Parallel|Win32 = Release-Parallel|Win32
+		Release-Serial|Win32 = Release-Serial|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D60AB091-1DB6-4ECB-B55A-C0C5B8BC3CFB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D60AB091-1DB6-4ECB-B55A-C0C5B8BC3CFB}.Debug|Win32.Build.0 = Debug|Win32
+		{D60AB091-1DB6-4ECB-B55A-C0C5B8BC3CFB}.Release-Parallel|Win32.ActiveCfg = Release-Parallel|Win32
+		{D60AB091-1DB6-4ECB-B55A-C0C5B8BC3CFB}.Release-Parallel|Win32.Build.0 = Release-Parallel|Win32
+		{D60AB091-1DB6-4ECB-B55A-C0C5B8BC3CFB}.Release-Serial|Win32.ActiveCfg = Release-Serial|Win32
+		{D60AB091-1DB6-4ECB-B55A-C0C5B8BC3CFB}.Release-Serial|Win32.Build.0 = Release-Serial|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
